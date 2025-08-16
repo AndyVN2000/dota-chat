@@ -23,7 +23,6 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
   // Interaction id, type and data
   const { id, type, data, member } = req.body;
 
-
   /**
    * Handle verification requests
    */
@@ -36,9 +35,20 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
   if (type === InteractionType.APPLICATION_COMMAND) {
-    const {name} = data;
+    const {name, options} = data;
     const {user} = member;
     const {global_name} = user;
+
+    let value;
+    if (options == undefined) {
+        // Default maximum value the dice can roll.
+        value = 100;
+    }
+    else {
+        // Use the specified max value given by user.
+        value = options[0].value;
+    }
+
     if (name === 'roll') {
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -47,7 +57,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
                 components: [
                     {
                         type: MessageComponentTypes.TEXT_DISPLAY,
-                        content: `${global_name} rolls a ${roll()}.`
+                        content: `${global_name} rolls a ${roll(value)}.`
                     }
                 ]
             }
