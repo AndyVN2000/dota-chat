@@ -1,4 +1,4 @@
-import { InstallGlobalCommands } from "./utils";
+import { InstallGlobalCommands } from "./utils.js";
 
 const ROLL_COMMAND = {
     name: 'roll',
