@@ -1,4 +1,7 @@
+import 'dotenv/config';
+
 export async function DiscordRequest(endpoint, options) {
+    console.log("TOKEN IS: " + process.env.DISCORD_TOKEN)
   // append endpoint to root API URL
   const url = 'https://discord.com/api/v10/' + endpoint;
   // Stringify payloads
@@ -8,7 +11,7 @@ export async function DiscordRequest(endpoint, options) {
     headers: {
       Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
       'Content-Type': 'application/json; charset=UTF-8',
-      'User-Agent': 'DiscordBot (https://github.com/discord/discord-example-app, 1.0.0)',
+      'User-Agent': 'DiscordBot (https://github.com/AndyVN2000/dota-chat, 1.0.0)',
     },
     ...options
   });

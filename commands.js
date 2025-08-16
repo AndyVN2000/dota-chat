@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import { InstallGlobalCommands } from "./utils.js";
 
 const ROLL_COMMAND = {
