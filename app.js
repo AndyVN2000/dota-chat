@@ -1,6 +1,11 @@
 import 'dotenv/config';
 import express from 'express';
-import { verifyKeyMiddleware } from 'discord-interactions';
+import { 
+    verifyKeyMiddleware,
+    InteractionType,
+    InteractionResponseType,
+    InteractionResponseFlags
+ } from 'discord-interactions';
 import { DiscordRequest } from './utils.js';
 
 // Create an express app
@@ -27,6 +32,17 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
    * Handle slash command requests
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
+  if (type === InteractionType.APPLICATION_COMMAND) {
+    const {name} = data;
+    if (name === 'roll') {
+        return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                flags: InteractionResponseFlags.IS_COMPONENTS_V2
+            }
+        })
+    }
+  }
 });
 
 app.listen(PORT, () => {
