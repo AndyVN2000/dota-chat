@@ -1,7 +1,6 @@
 import 'dotenv/config';
 
 export async function DiscordRequest(endpoint, options) {
-    console.log("TOKEN IS: " + process.env.DISCORD_TOKEN)
   // append endpoint to root API URL
   const url = 'https://discord.com/api/v10/' + endpoint;
   // Stringify payloads
