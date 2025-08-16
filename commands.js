@@ -6,3 +6,7 @@ const ROLL_COMMAND = {
     integration_types: [0],
     contexts: [0],
 };
+
+const ALL_COMMANDS = [ROLL_COMMAND]
+
+InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS)
