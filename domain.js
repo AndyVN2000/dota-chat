@@ -1,5 +1,5 @@
 import { randomInt } from "crypto";
 
-export function roll() {
-    return randomInt(99) + 1;
+export function roll(value = 99) {
+    return randomInt(value) + 1;
 }
