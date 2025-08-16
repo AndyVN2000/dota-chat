@@ -8,6 +8,7 @@ import {
     MessageComponentTypes
  } from 'discord-interactions';
 import { DiscordRequest } from './utils.js';
+import { roll } from './domain.js';
 
 // Create an express app
 const app = express();
@@ -43,7 +44,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
                 components: [
                     {
                         type: MessageComponentTypes.TEXT_DISPLAY,
-                        content: `testing roll command`
+                        content: `${roll()}`
                     }
                 ]
             }
