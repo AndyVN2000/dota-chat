@@ -21,7 +21,8 @@ const PORT = process.env.PORT || 3000;
  */
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
   // Interaction id, type and data
-  const { id, type, data } = req.body;
+  const { id, type, data, member } = req.body;
+
 
   /**
    * Handle verification requests
@@ -36,6 +37,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
    */
   if (type === InteractionType.APPLICATION_COMMAND) {
     const {name} = data;
+    const {user} = member;
+    const {global_name} = user;
     if (name === 'roll') {
         return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -44,7 +47,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
                 components: [
                     {
                         type: MessageComponentTypes.TEXT_DISPLAY,
-                        content: `${roll()}`
+                        content: `${global_name} rolls a ${roll()}.`
                     }
                 ]
             }
