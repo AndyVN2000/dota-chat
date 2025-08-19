@@ -1,5 +1,5 @@
-import { SlashCommandBuilder } from 'discord.js';
-import roll from 'domain.js'
+const { SlashCommandBuilder } = require('discord.js');
+const { roll } = require('../../domain.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
