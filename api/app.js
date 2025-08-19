@@ -7,8 +7,8 @@ import {
     InteractionResponseFlags,
     MessageComponentTypes
  } from 'discord-interactions';
-import { DiscordRequest } from './utils.js';
-import { roll } from './domain.js';
+import { DiscordRequest } from '../utils.js';
+import { roll } from '../domain.js';
 
 // Create an express app
 const app = express();
