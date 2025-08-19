@@ -2,6 +2,10 @@ import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 
+// These lines make "require" available
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 // Require the necessary discord.js classes
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 
