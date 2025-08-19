@@ -26,4 +26,6 @@ Read up on the documentation to fully understand the usage.
 ### Discord Gateway
 
 Write source code to connect the Dota Chat Discord app to the Discord Gateway. This source code file should probably
-be denoted as the `main` in `package.json`.
+be designated as the `main` in `package.json`.
+
+I am following this guide: https://discordjs.guide/#before-you-begin
