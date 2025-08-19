@@ -6,6 +6,6 @@ module.exports = {
 		.setName('roll')
 		.setDescription('Roll a dice'),
 	async execute(interaction) {
-		await interaction.reply(roll());
+		await interaction.reply(`${interaction.user.username} rolls a ${roll()}`);
 	},
 };
