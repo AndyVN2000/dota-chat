@@ -5,6 +5,12 @@ import path from 'node:path';
 // Require the necessary discord.js classes
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 
+// To fix the "__dirname is not defined in ES module scope"
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
