@@ -5,6 +5,7 @@ import {
     InteractionResponseFlags, 
     MessageComponentTypes } from 'discord-interactions';
 import nacl from 'tweetnacl';
+import { roll } from '../domain.js';
 
 function verifyDiscordRequest(rawBody, signature, timestamp, publicKey) {
   const isValid = nacl.sign.detached.verify(
