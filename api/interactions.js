@@ -1,74 +1,56 @@
 import 'dotenv/config';
-import express from 'express';
-import { 
-    verifyKeyMiddleware,
-    InteractionType,
-    InteractionResponseType,
-    InteractionResponseFlags,
-    MessageComponentTypes
- } from 'discord-interactions';
-import { DiscordRequest } from '../utils.js';
+import {
+  verifyKeyMiddleware,
+  InteractionType,
+  InteractionResponseType,
+  InteractionResponseFlags,
+  MessageComponentTypes
+} from 'discord-interactions';
 import { roll } from '../domain.js';
 
-// Create an express app
-const app = express();
-// Get port, or default to 3000
-const PORT = process.env.PORT || 3000;
+// Helper to wrap discord-interactions verifyKeyMiddleware for Vercel
+function verifyDiscordRequest(req, res, next) {
+  return verifyKeyMiddleware(process.env.PUBLIC_KEY)(req, res, next);
+}
 
-/**
- * Interactions endpoint URL where Discord will send HTTP requests
- * Parse request body and verifies incoming requests using discord-interactions package
- */
-app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
-  // Interaction id, type and data
-  const { id, type, data, member } = req.body;
-
-  /**
-   * Handle verification requests
-   */
-  if (type === InteractionType.PING) {
-    return res.send({ type: InteractionResponseType.PONG });
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method not allowed');
   }
 
-  /**
-   * Handle slash command requests
-   * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
-   */
-  if (type === InteractionType.APPLICATION_COMMAND) {
-    const {name, options} = data;
-    const {user} = member;
-    const {global_name} = user;
+  // Verify request
+  verifyDiscordRequest(req, res, async () => {
+    const { type, data, member } = req.body;
 
-    let value;
-    if (options == undefined) {
-        // Default maximum value the dice can roll.
-        value = 100;
-    }
-    else {
-        // Use the specified max value given by user.
-        value = options[0].value;
+    if (type === InteractionType.PING) {
+      return res.send({ type: InteractionResponseType.PONG });
     }
 
-    if (name === 'roll') {
+    if (type === InteractionType.APPLICATION_COMMAND) {
+      const { name, options } = data;
+      const { user } = member;
+      const { global_name } = user;
+
+      let value = options?.[0]?.value ?? 100;
+
+      if (name === 'roll') {
         return res.send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-                components: [
-                    {
-                        type: MessageComponentTypes.TEXT_DISPLAY,
-                        content: `${global_name} rolls a ${roll(value)}.`
-                    }
-                ]
-            }
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+            components: [
+              {
+                type: MessageComponentTypes.TEXT_DISPLAY,
+                content: `${global_name} rolls a ${roll(value)}.`
+              }
+            ]
+          }
         });
+      }
+
+      return res.status(400).json({ error: 'unknown command' });
     }
 
-    console.error(`unknown command: ${name}`);
-    return res.status(400).json({error: 'unknown command'});
-  }
-});
-
-app.listen(PORT, () => {
-  console.log('Listening on port', PORT);
-});
+    return res.status(400).json({ error: 'unhandled interaction type' });
+  });
+}
