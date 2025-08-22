@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import {
-  verifyKeyMiddleware,
+  verifyKey,
   InteractionType,
   InteractionResponseType,
   InteractionResponseFlags,
@@ -8,49 +8,69 @@ import {
 } from 'discord-interactions';
 import { roll } from '../domain.js';
 
-// Helper to wrap discord-interactions verifyKeyMiddleware for Vercel
-function verifyDiscordRequest(req, res, next) {
-  return verifyKeyMiddleware(process.env.PUBLIC_KEY)(req, res, next);
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
   }
 
-  // Verify request
-  verifyDiscordRequest(req, res, async () => {
-    const { type, data, member } = req.body;
+  const signature = req.headers['x-signature-ed25519'];
+  const timestamp = req.headers['x-signature-timestamp'];
 
-    if (type === InteractionType.PING) {
-      return res.send({ type: InteractionResponseType.PONG });
+  // Raw body is needed for verification
+  const rawBody = await getRawBody(req);
+
+  const isValid = verifyKey(
+    rawBody,
+    signature,
+    timestamp,
+    process.env.PUBLIC_KEY
+  );
+
+  if (!isValid) {
+    return res.status(401).send('Bad request signature');
+  }
+
+  const body = JSON.parse(rawBody);
+  const { type, data, member } = body;
+
+  if (type === InteractionType.PING) {
+    return res.send({ type: InteractionResponseType.PONG });
+  }
+
+  if (type === InteractionType.APPLICATION_COMMAND) {
+    const { name, options } = data;
+    const { user } = member;
+    const { global_name } = user;
+
+    let value = options?.[0]?.value ?? 100;
+
+    if (name === 'roll') {
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+          components: [
+            {
+              type: MessageComponentTypes.TEXT_DISPLAY,
+              content: `${global_name} rolls a ${roll(value)}.`
+            }
+          ]
+        }
+      });
     }
 
-    if (type === InteractionType.APPLICATION_COMMAND) {
-      const { name, options } = data;
-      const { user } = member;
-      const { global_name } = user;
+    return res.status(400).json({ error: 'unknown command' });
+  }
 
-      let value = options?.[0]?.value ?? 100;
+  return res.status(400).json({ error: 'unhandled interaction type' });
+}
 
-      if (name === 'roll') {
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-            components: [
-              {
-                type: MessageComponentTypes.TEXT_DISPLAY,
-                content: `${global_name} rolls a ${roll(value)}.`
-              }
-            ]
-          }
-        });
-      }
-
-      return res.status(400).json({ error: 'unknown command' });
-    }
-
-    return res.status(400).json({ error: 'unhandled interaction type' });
+// Helper: read raw body buffer
+async function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
   });
 }
