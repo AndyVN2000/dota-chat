@@ -1,5 +1,9 @@
 // /api/interactions.js
-import { InteractionType, InteractionResponseType } from 'discord-interactions';
+import { 
+    InteractionType, 
+    InteractionResponseType, 
+    InteractionResponseFlags, 
+    MessageComponentTypes } from 'discord-interactions';
 import nacl from 'tweetnacl';
 
 function verifyDiscordRequest(rawBody, signature, timestamp, publicKey) {
