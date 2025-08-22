@@ -1,28 +1,22 @@
 import { InteractionType, InteractionResponseType } from 'discord-interactions';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).send('Method Not Allowed');
+  if (req.method === 'POST') {
+    const body = await new Promise((resolve) => {
+      let data = '';
+      req.on('data', chunk => data += chunk);
+      req.on('end', () => resolve(JSON.parse(data)));
+    });
+
+    if (body.type === InteractionType.PING) {
+      // Respond exactly what Discord expects
+      return res.status(200).json({ type: InteractionResponseType.PONG });
+    }
+
+    // Catch-all response for other commands
+    return res.status(200).json({});
   }
 
-  // Read raw body (optional, not used for verification here)
-  let rawBody = '';
-  for await (const chunk of req) {
-    rawBody += chunk;
-  }
-
-  const body = JSON.parse(rawBody);
-
-  if (body.type === InteractionType.PING) {
-    // Respond exactly as Discord expects
-    res.status(200)
-       .setHeader('Content-Type', 'application/json')
-       .send(JSON.stringify({ type: InteractionResponseType.PONG }));
-    return;
-  }
-
-  // Catch-all response
-  res.status(200)
-     .setHeader('Content-Type', 'application/json')
-     .send(JSON.stringify({}));
+  // Reject non-POST requests
+  res.status(405).send('Method Not Allowed');
 }
