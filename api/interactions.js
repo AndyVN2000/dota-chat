@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   }
 
   const body = JSON.parse(rawBody);
-  const { data, type } = body
+  const { data, type, member } = body
 
   if (body.type === InteractionType.PING) {
     return res.status(200).json({ type: InteractionResponseType.PONG });
