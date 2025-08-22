@@ -34,7 +34,9 @@ export default async function handler(req, res) {
   const { type, data, member } = body;
 
   if (type === InteractionType.PING) {
-    return res.send({ type: InteractionResponseType.PONG });
+    return res.status(200)
+      .setHeader('Content-Type', 'application/json')
+      .send(JSON.stringify({ type: InteractionResponseType.PONG }));
   }
 
   if (type === InteractionType.APPLICATION_COMMAND) {
