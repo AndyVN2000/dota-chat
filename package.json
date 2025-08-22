@@ -2,13 +2,13 @@
   "name": "dota-chat",
   "version": "2.1.0",
   "description": "",
-  "main": "frontend.js",
+  "main": "interactions.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node frontend.js",
+    "start": "node interactions.js",
     "register": "node commands.js",
-    "dev": "nodemon frontend.js"
+    "dev": "nodemon interactions.js"
   },
   "repository": {
     "type": "git",
