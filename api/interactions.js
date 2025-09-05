@@ -43,7 +43,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    return handleCommands(body);
+    const response = await handleCommands(body, res);
+    return res.status(200).json(response)
   } catch(err) {
     console.error(`Unhandled error in command handler:`, err);
     return res.status(200).json({
@@ -51,12 +52,9 @@ export default async function handler(req, res) {
       data: { content: 'Unexpected error occurred'}
     })
   }
-  
-
-  // Handle other commands here
 }
 
-async function handleCommands(body){
+async function handleCommands(body, res){
   
   const { data, type, member } = body
   const {name, options} = data;
@@ -77,7 +75,7 @@ async function handleCommands(body){
       
       try {
         if (name === 'roll') {
-            return res.send({
+            return {
                 type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 data: {
                     flags: InteractionResponseFlags.IS_COMPONENTS_V2,
@@ -88,7 +86,7 @@ async function handleCommands(body){
                         }
                     ]
                 }
-            });
+            };
         }
       } catch {
         console.error('Error on /roll')
@@ -100,5 +98,4 @@ async function handleCommands(body){
     }
 
     console.error(`unknown command: ${name}`);
-    return res.status(400).json({error: 'unknown command'});
 }
