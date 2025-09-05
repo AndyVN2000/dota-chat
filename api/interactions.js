@@ -74,6 +74,16 @@ async function handleCommands(body){
             value = options[0].value;
           }
 
+          if (value < 1) {
+            return {
+              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+              data: {
+                flags: InteractionResponseFlags.EPHEMERAL,
+                content: 'Does not accept values less than 1'
+              }
+            }
+          }
+
           return {
               type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
               data: {
