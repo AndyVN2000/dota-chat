@@ -2,6 +2,13 @@
 
 ## TODO list
 
+### Features
+
+- Option to define a lower bound to the `/roll` command.
+- `/roll` command should show the range of the dice roll when invoked.
+- `/roll` should handle negative values as optional input (reject input gracefully).
+- Can flip a coin.
+
 ### Commands not appearing in Discord
 
 Registering my Discord commands by running in shell:
