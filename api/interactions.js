@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
 }
 
-async function handleCommands(body, res){
+async function handleCommands(body){
   
   const { data, type, member } = body
   const {name, options} = data;
@@ -90,12 +90,13 @@ async function handleCommands(body, res){
         }
       } catch {
         console.error('Error on /roll')
-        return res.status(200).json({
+        return {
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: { content: 'Something went wrong with the dice roll.'}
-        })
+        }
       }
     }
 
     console.error(`unknown command: ${name}`);
+    throw new Error(`Unknown command ${name}`)
 }
