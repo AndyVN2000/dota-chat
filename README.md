@@ -29,3 +29,9 @@ Write source code to connect the Dota Chat Discord app to the Discord Gateway. T
 be designated as the `main` in `package.json`.
 
 I am following this guide: https://discordjs.guide/#before-you-begin
+
+Update: The usage of Discord Gateway has been discarded. The code for it remains in the `/discordjs/` folder. But it is unused.
+
+### Understand Discord Verification step
+
+There is no official documentation regarding to handling the verification step when adding an endpoint url in the Discord Developer portal.
