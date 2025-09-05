@@ -62,31 +62,30 @@ async function handleCommands(body){
   const {global_name} = user;
 
   if (type === InteractionType.APPLICATION_COMMAND) {
-  
-      let value;
-      if (options == undefined) {
-          // Default maximum value the dice can roll.
-          value = 100;
-      }
-      else {
-          // Use the specified max value given by user.
-          value = options[0].value;
-      }
-      
       try {
         if (name === 'roll') {
-            return {
-                type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                data: {
-                    flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-                    components: [
-                        {
-                            type: MessageComponentTypes.TEXT_DISPLAY,
-                            content: `${global_name} rolls a ${roll(value)}.`
-                        }
-                    ]
-                }
-            };
+          let value;
+          if (options == undefined) {
+            // Default maximum value the dice can roll.
+            value = 100;
+          }
+          else {
+            // Use the specified max value given by user.
+            value = options[0].value;
+          }
+
+          return {
+              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+              data: {
+                  flags: InteractionResponseFlags.IS_COMPONENTS_V2,
+                  components: [
+                      {
+                          type: MessageComponentTypes.TEXT_DISPLAY,
+                          content: `${global_name} rolls a ${roll(value)}.`
+                      }
+                  ]
+              }
+          };
         }
       } catch {
         console.error('Error on /roll')
